@@ -1,0 +1,11 @@
+.venv/
+.vscode/
+.github/
+add_swagger_examples.py
+comprehensive_swagger.py
+fix_swagger_examples.py
+temp_fix_swagger.py
+enhance_all_swagger.py
+update_swagger_docs.py
+db.sqlite3
+__pycache__/
