@@ -10,11 +10,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     networks:
-      - app-network
+      - accounting-network
 
   web:
     build: .
-    command: gunicorn daily_hisab.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn daily_hisab.wsgi:application --bind 0.0.0.0:8000 --workers 3
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
@@ -25,9 +25,10 @@ services:
       - db
     environment:
       - DEBUG=False
-      - ALLOWED_HOSTS=dailyhisaab.deltospark.com,localhost
+      - ALLOWED_HOSTS=dailyhisaab.deltospark.com,localhost,127.0.0.1
+      - SECURE_SSL_REDIRECT=False  # Will be True after SSL setup
     networks:
-      - app-network
+      - accounting-network
 
   nginx:
     image: nginx:alpine
@@ -38,12 +39,12 @@ services:
       - ./nginx:/etc/nginx/conf.d
       - static_volume:/var/www/html/static
       - media_volume:/var/www/html/media
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
     depends_on:
       - web
     networks:
-      - app-network
+      - accounting-network
     restart: unless-stopped
 
   certbot:
@@ -51,10 +52,8 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    profiles:
-      - ssl
     networks:
-      - app-network
+      - accounting-network
 
 volumes:
   postgres_data:
@@ -62,5 +61,5 @@ volumes:
   media_volume:
 
 networks:
-  app-network:
+  accounting-network:
     driver: bridge
