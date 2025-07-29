@@ -10,6 +10,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # Step 1: Separate service for collectstatic
+  collectstatic:
+    build: .
+    command: python manage.py collectstatic --noinput
+    volumes:
+      - static_volume:/var/www/html/static
+    depends_on:
+      - db
+
   web:
     build: .
     volumes:
@@ -18,8 +27,7 @@ services:
     depends_on:
       - db
     command: >
-      sh -c "python manage.py collectstatic --noinput &&
-             python manage.py migrate &&
+      sh -c "python manage.py migrate &&
              gunicorn dailyhisab.wsgi:application --bind 0.0.0.0:8000"
 
   nginx:
