@@ -13,8 +13,8 @@ services:
   web:
     build: .
     volumes:
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
+      - static_volume:/var/www/html/static
+      - media_volume:/var/www/html/media
     depends_on:
       - db
     command: >
