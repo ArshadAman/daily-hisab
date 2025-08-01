@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import AdminActivityLog, AdminRole
 
-# Register your models here.
+admin.site.register(AdminActivityLog)
+admin.site.register(AdminRole)
